@@ -18,16 +18,14 @@ describe("TaskCreateSheet", () => {
         data={{
           contacts: [
             buildContact({
-              first_name: "Ada",
+              name: "Ada Lovelace",
               id: 1,
-              last_name: "Lovelace",
               last_seen: "2025-01-01T10:00:00.000Z",
               nb_tasks: 1,
             }),
             buildContact({
-              first_name: "Grace",
+              name: "Grace Hopper",
               id: 2,
-              last_name: "Hopper",
               last_seen: originalLastSeen,
             }),
           ],

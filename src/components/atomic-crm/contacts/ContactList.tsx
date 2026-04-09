@@ -86,7 +86,7 @@ const ContactBulkActionButtons = () => (
 
 const ContactListActions = () => (
   <TopToolbar>
-    <SortButton fields={["first_name", "last_name", "last_seen"]} />
+    <SortButton fields={["name", "last_seen"]} />
     <ContactImportButton />
     <ExportButton exporter={exporter} />
     <CreateButton />
@@ -138,12 +138,25 @@ const ContactListLayoutMobile = () => {
   );
 };
 
-const exporter: Exporter<Contact> = async (records, fetchRelatedRecords) => {
-  const companies = await fetchRelatedRecords<Company>(
-    records,
-    "company_id",
-    "companies",
-  );
+const exporter: Exporter<Contact> = async (
+  records,
+  fetchRelatedRecords,
+  dataProvider,
+) => {
+  // Collect all unique company IDs from all contacts' company_ids arrays
+  const allCompanyIds = [
+    ...new Set(records.flatMap((r) => r.company_ids ?? [])),
+  ];
+  const companiesMap: Record<number, Company> = {};
+  if (allCompanyIds.length > 0) {
+    const { data: companiesData } = await dataProvider.getMany<Company>(
+      "companies",
+      { ids: allCompanyIds },
+    );
+    for (const company of companiesData) {
+      companiesMap[company.id as number] = company;
+    }
+  }
   const sales = await fetchRelatedRecords<Sale>(records, "sales_id", "sales");
   const tags = await fetchRelatedRecords<Tag>(records, "tags", "tags");
 
@@ -151,8 +164,11 @@ const exporter: Exporter<Contact> = async (records, fetchRelatedRecords) => {
     const exportedContact = {
       ...contact,
       company:
-        contact.company_id != null
-          ? companies[contact.company_id].name
+        contact.company_ids?.length > 0
+          ? contact.company_ids
+              .map((id) => companiesMap[id as number]?.name)
+              .filter(Boolean)
+              .join("; ")
           : undefined,
       sales:
         contact.sales_id != null

@@ -299,10 +299,10 @@ To filter by the current user, if the table has a sales_id column, add a WHERE s
 This tool only supports SELECT queries. For INSERT, UPDATE, or DELETE operations, use the mutate tool.
 
 Examples:
-- "SELECT id, first_name, last_name, email_fts FROM contacts_summary WHERE email_fts LIKE '%@company.com%'"
+- "SELECT id, name, email_fts FROM contacts_summary WHERE email_fts LIKE '%@company.com%'"
 - "SELECT name, stage, amount FROM deals WHERE created_at > NOW() - INTERVAL '30 days' ORDER BY amount DESC"
 - "SELECT COUNT(*) as total_tasks, type FROM tasks WHERE done_date IS NULL GROUP BY type"
-- "SELECT c.first_name, c.last_name, co.name as company_name FROM contacts c JOIN companies co ON c.company_id = co.id WHERE co.sector = 'Technology'"`,
+- "SELECT c.name, co.name as company_name FROM contacts c JOIN companies co ON co.id = ANY(c.company_ids) WHERE co.sector = 'Technology'"`,
       inputSchema: z.object({
         sql: z.string().describe("The SQL SELECT query to execute"),
       }),
@@ -353,7 +353,7 @@ IMPORTANT: Never specify sales_id in INSERT or UPDATE statements — it is autom
 For read-only queries, use the query tool instead.
 
 Examples:
-- "INSERT INTO contacts (first_name, last_name, email) VALUES ('John', 'Doe', 'john@example.com')"
+- "INSERT INTO contacts (name, email) VALUES ('John Doe', 'john@example.com')"
 - "UPDATE deals SET stage = 'won-deal' WHERE id = 123"
 - "DELETE FROM tasks WHERE id = 456"`,
       inputSchema: z.object({

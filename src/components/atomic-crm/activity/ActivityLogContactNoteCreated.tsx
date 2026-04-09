@@ -58,7 +58,7 @@ export function ActivityLogContactNoteCreated({
               reference="contacts"
               record={activity.contactNote}
             >
-              <TextField source="first_name" /> <TextField source="last_name" />
+              <TextField source="name" />
             </ReferenceField>
             {context !== "company" && (
               <>

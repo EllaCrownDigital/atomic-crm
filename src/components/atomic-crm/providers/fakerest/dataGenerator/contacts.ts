@@ -32,11 +32,11 @@ export const generateContacts = (db: Db, size = 500): Required<Contact>[] => {
     const has_avatar =
       weightedBoolean(25) && numberOfContacts < nbAvailblePictures;
     const gender = random.arrayElement(contactGender).value;
-    const first_name = name.firstName(gender as any);
-    const last_name = name.lastName();
+    const contactName = `${name.firstName(gender as any)} ${name.lastName()}`;
+    const [fName, lName] = contactName.split(" ");
     const email_jsonb = [
       {
-        email: internet.email(first_name, last_name),
+        email: internet.email(fName, lName),
         type: getRandomContactDetailsType(),
       },
     ];
@@ -75,11 +75,10 @@ export const generateContacts = (db: Db, size = 500): Required<Contact>[] => {
 
     return {
       id,
-      first_name,
-      last_name,
+      name: contactName,
       gender,
       title: title.charAt(0).toUpperCase() + title.substr(1),
-      company_id: company.id,
+      company_ids: [company.id],
       company_name: company.name,
       email_jsonb,
       phone_jsonb,

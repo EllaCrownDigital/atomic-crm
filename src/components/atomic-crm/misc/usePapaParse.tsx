@@ -127,7 +127,7 @@ export function usePapaParse<T>({
             error,
           });
         },
-        dynamicTyping: true,
+        dynamicTyping: false,
       });
     },
     [batchSize, processBatch],

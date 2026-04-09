@@ -28,6 +28,11 @@ create or replace trigger set_task_sales_id_trigger
     before insert on public.tasks
     for each row execute function public.set_sales_id_default();
 
+-- Sanitize company phone number (strip non-digit characters except +)
+create or replace trigger "10_sanitize_company_phone"
+    before insert or update on public.companies
+    for each row execute function public.sanitize_company_phone_number();
+
 -- Auto-fetch company logo from website favicon on save
 create or replace trigger company_saved
     before insert or update on public.companies
@@ -37,6 +42,11 @@ create or replace trigger company_saved
 create or replace trigger "10_lowercase_contact_emails"
     before insert or update on public.contacts
     for each row execute function public.lowercase_email_jsonb();
+
+-- Sanitize contact phone numbers (strip non-digit characters except +)
+create or replace trigger "11_sanitize_contact_phones"
+    before insert or update on public.contacts
+    for each row execute function public.sanitize_phone_numbers();
 
 -- Auto-fetch contact avatar from email on save (runs after lowercase_contact_emails)
 create or replace trigger "20_contact_saved"

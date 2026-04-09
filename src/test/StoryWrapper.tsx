@@ -55,15 +55,14 @@ export const createCrmDb = (overrides: Partial<Db> = {}): Db =>
 // Build a valid contact record with sensible defaults to keep tests and stories terse.
 export const buildContact = (overrides: Partial<Contact> = {}): Contact => ({
   background: "",
-  company_id: null,
+  company_ids: [],
   company_name: undefined,
   email_jsonb: [{ email: "ada@example.com", type: "Work" }],
-  first_name: "Ada",
   first_seen: "2025-01-01T09:00:00.000Z",
   gender: "female",
   has_newsletter: false,
   id: 1,
-  last_name: "Lovelace",
+  name: "Ada Lovelace",
   last_seen: "2025-01-02T10:00:00.000Z",
   linkedin_url: null,
   nb_tasks: 0,

@@ -49,16 +49,14 @@ export const getOrCreateCompanyFromDomain = async ({
 
 export const getOrCreateContactFromEmailInfo = async ({
   email,
-  firstName,
-  lastName,
+  name,
   salesId,
   domain,
   companyName,
   website,
 }: {
   email: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   salesId: number;
   domain: string;
   companyName: string;
@@ -92,10 +90,9 @@ export const getOrCreateContactFromEmailInfo = async ({
   const { data: newContacts, error: createContactError } = await supabaseAdmin
     .from("contacts")
     .insert({
-      first_name: firstName,
-      last_name: lastName,
+      name,
       email_jsonb: [{ email, type: "Work" }],
-      company_id: company ? company.id : null,
+      company_ids: company ? [company.id] : [],
       sales_id: salesId,
       first_seen: new Date(),
       last_seen: new Date(),
@@ -114,8 +111,7 @@ export const addNoteToContact = async ({
   salesEmail,
   email,
   domain,
-  firstName,
-  lastName,
+  name,
   noteContent,
   attachments,
   companyName,
@@ -124,8 +120,7 @@ export const addNoteToContact = async ({
   salesEmail: string;
   email: string;
   domain: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   noteContent: string;
   attachments: Attachment[];
   companyName: string;
@@ -155,8 +150,7 @@ export const addNoteToContact = async ({
 
   const { contact, error } = await getOrCreateContactFromEmailInfo({
     email,
-    firstName,
-    lastName,
+    name,
     salesId: sales.id,
     domain,
     companyName,

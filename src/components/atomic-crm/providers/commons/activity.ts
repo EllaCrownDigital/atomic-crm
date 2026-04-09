@@ -32,7 +32,7 @@ export async function getActivityLog(
 
   const filter = {} as any;
   if (companyId) {
-    filter.company_id = companyId;
+    filter["company_ids@cs"] = `{${companyId}}`;
   } else if (salesId) {
     filter["sales_id@in"] = `(${salesId})`;
   }
@@ -110,13 +110,13 @@ async function getNewContactsAndNotes(
 
   const newContacts = contacts
     .filter(
-      (contact): contact is Contact & { company_id: Identifier } =>
-        contact.company_id != null,
+      (contact): contact is Contact & { company_ids: Identifier[] } =>
+        contact.company_ids?.length > 0,
     )
     .map((contact) => ({
       id: `contact.${contact.id}.created`,
       type: CONTACT_CREATED,
-      company_id: contact.company_id,
+      company_id: contact.company_ids[0],
       sales_id: contact.sales_id,
       contact,
       date: contact.first_seen,

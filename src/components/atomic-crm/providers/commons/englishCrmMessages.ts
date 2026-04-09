@@ -72,11 +72,10 @@ export const englishCrmMessages = {
         position: "Position",
       },
       fields: {
-        first_name: "First name",
-        last_name: "Last name",
+        name: "Name",
         last_seen: "Last seen",
         title: "Title",
-        company_id: "Company",
+        company_ids: "Companies",
         email_jsonb: "Email addresses",
         email: "Email",
         phone_jsonb: "Phone numbers",

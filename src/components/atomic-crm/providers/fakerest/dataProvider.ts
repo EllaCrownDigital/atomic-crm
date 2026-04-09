@@ -96,19 +96,19 @@ async function fetchAndUpdateCompanyData(
   const { data } = params;
   const newData = { ...data };
 
-  if (!newData.company_id) {
+  if (!newData.company_ids?.length) {
     return params;
   }
 
-  const { data: company } = await dataProvider.getOne("companies", {
-    id: newData.company_id,
+  const { data: companies } = await dataProvider.getMany("companies", {
+    ids: newData.company_ids,
   });
 
-  if (!company) {
+  if (!companies?.length) {
     return params;
   }
 
-  newData.company_name = company.name;
+  newData.company_name = companies.map((c: any) => c.name).join(", ");
   return { ...params, data: newData };
 }
 
@@ -442,10 +442,12 @@ export const createDataProvider = ({
           return fetchAndUpdateCompanyData(newParams, dataProvider);
         },
         afterCreate: async (result) => {
-          if (result.data.company_id != null) {
-            await updateCompany(result.data.company_id, (company) => ({
-              nb_contacts: (company.nb_contacts ?? 0) + 1,
-            }));
+          if (result.data.company_ids?.length) {
+            for (const companyId of result.data.company_ids) {
+              await updateCompany(companyId, (company) => ({
+                nb_contacts: (company.nb_contacts ?? 0) + 1,
+              }));
+            }
           }
 
           return result;
@@ -455,10 +457,12 @@ export const createDataProvider = ({
           return fetchAndUpdateCompanyData(newParams, dataProvider);
         },
         afterDelete: async (result) => {
-          if (result.data.company_id != null) {
-            await updateCompany(result.data.company_id, (company) => ({
-              nb_contacts: (company.nb_contacts ?? 1) - 1,
-            }));
+          if (result.data.company_ids?.length) {
+            for (const companyId of result.data.company_ids) {
+              await updateCompany(companyId, (company) => ({
+                nb_contacts: (company.nb_contacts ?? 1) - 1,
+              }));
+            }
           }
 
           return result;
@@ -545,19 +549,28 @@ export const createDataProvider = ({
           return await processCompanyLogo(params);
         },
         afterUpdate: async (result, dataProvider) => {
-          // get all contacts of the company and for each contact, update the company_name
-          const { id, name } = result.data;
+          const { id } = result.data;
           const { data: contacts } = await dataProvider.getList("contacts", {
-            filter: { company_id: id },
+            filter: { "company_ids@cs": `{${id}}` },
             pagination: { page: 1, perPage: 1000 },
             sort: { field: "id", order: "ASC" },
           });
 
-          const contactIds = contacts.map((contact) => contact.id);
-          await dataProvider.updateMany("contacts", {
-            ids: contactIds,
-            data: { company_name: name },
-          });
+          for (const contact of contacts) {
+            const { data: allCompanies } = await dataProvider.getMany(
+              "companies",
+              {
+                ids: contact.company_ids,
+              },
+            );
+            await dataProvider.update("contacts", {
+              id: contact.id,
+              data: {
+                company_name: allCompanies.map((c: any) => c.name).join(", "),
+              },
+              previousData: contact,
+            });
+          }
           return result;
         },
       } satisfies ResourceCallbacks<Company>,

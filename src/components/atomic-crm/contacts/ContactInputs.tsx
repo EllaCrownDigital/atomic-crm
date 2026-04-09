@@ -12,6 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BooleanInput } from "@/components/admin/boolean-input";
 import { ReferenceInput } from "@/components/admin/reference-input";
+import { ReferenceArrayInput } from "@/components/admin/reference-array-input";
+import { AutocompleteArrayInput } from "@/components/admin/autocomplete-array-input";
 import { TextInput } from "@/components/admin/text-input";
 import { RadioButtonGroupInput } from "@/components/admin/radio-button-group-input";
 import { SelectInput } from "@/components/admin/select-input";
@@ -22,7 +24,6 @@ import { isLinkedinUrl } from "../misc/isLinkedInUrl";
 import { StatusSelector } from "../notes";
 import type { Sale, Contact } from "../types";
 import { Avatar } from "./Avatar";
-import { AutocompleteCompanyInput } from "../companies/AutocompleteCompanyInput.tsx";
 import {
   contactGender,
   translateContactGenderLabel,
@@ -72,8 +73,7 @@ const ContactIdentityInputs = () => {
         optionValue="value"
         defaultValue={contactGender[0].value}
       />
-      <TextInput source="first_name" validate={required()} helperText={false} />
-      <TextInput source="last_name" validate={required()} helperText={false} />
+      <TextInput source="name" validate={required()} helperText={false} />
     </div>
   );
 };
@@ -86,9 +86,17 @@ const ContactPositionInputs = () => {
         {translate("resources.contacts.field_categories.position")}
       </h6>
       <TextInput source="title" helperText={false} />
-      <ReferenceInput source="company_id" reference="companies" perPage={10}>
-        <AutocompleteCompanyInput label="resources.contacts.fields.company_id" />
-      </ReferenceInput>
+      <ReferenceArrayInput
+        source="company_ids"
+        reference="companies"
+        perPage={10}
+      >
+        <AutocompleteArrayInput
+          label="resources.contacts.fields.company_ids"
+          optionText="name"
+          helperText={false}
+        />
+      </ReferenceArrayInput>
     </div>
   );
 };
@@ -111,16 +119,15 @@ const ContactPersonalInformationInputs = () => {
     },
   ];
 
-  // set first and last name based on email
+  // set name based on email
   const handleEmailChange = (email: string) => {
-    const { first_name, last_name } = getValues();
-    if (first_name || last_name || !email) return;
-    const [first, last] = email.split("@")[0].split(".");
-    setValue("first_name", first.charAt(0).toUpperCase() + first.slice(1));
-    setValue(
-      "last_name",
-      last ? last.charAt(0).toUpperCase() + last.slice(1) : "",
-    );
+    const { name } = getValues();
+    if (name || !email) return;
+    const parts = email.split("@")[0].split(".");
+    const fullName = parts
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join(" ");
+    setValue("name", fullName);
   };
 
   const handleEmailPaste: ClipboardEventHandler<

@@ -80,8 +80,7 @@ const ContactMergeDialog = ({ open, onClose }: ContactMergeDialogProps) => {
     "contacts",
     {
       filter: {
-        first_name: loserContact?.first_name,
-        last_name: loserContact?.last_name,
+        name: loserContact?.name,
         "id@neq": `${loserContact?.id}`, // Exclude current contact
       },
       pagination: { page: 1, perPage: 10 },

@@ -34,9 +34,7 @@ export function ActivityLogContactCreated({
               : "crm.activity.added_contact",
             { name: salesName },
           )}{" "}
-          <Link to={`/contacts/${contact.id}/show`}>
-            {contact.first_name} {contact.last_name}
-          </Link>
+          <Link to={`/contacts/${contact.id}/show`}>{contact.name}</Link>
           {context !== "company" && (
             <>
               {activity.company_id != null && (

@@ -55,10 +55,11 @@ function mergeContactData(winner: Contact, loser: Contact) {
   return {
     avatar: selectedAvatar ? (JSON.stringify(selectedAvatar) as any) : null,
     gender: winner.gender ?? loser.gender,
-    first_name: winner.first_name ?? loser.first_name,
-    last_name: winner.last_name ?? loser.last_name,
+    name: winner.name ?? loser.name,
     title: winner.title ?? loser.title,
-    company_id: winner.company_id ?? loser.company_id,
+    company_ids: [
+      ...new Set([...(winner.company_ids || []), ...(loser.company_ids || [])]),
+    ],
     email_jsonb: JSON.stringify(mergedEmails) as any,
     phone_jsonb: JSON.stringify(mergedPhones) as any,
     linkedin_url: winner.linkedin_url || loser.linkedin_url,

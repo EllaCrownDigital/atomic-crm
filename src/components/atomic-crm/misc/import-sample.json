@@ -45,17 +45,15 @@
   "contacts": [
     {
       "id": 456,
-      "first_name": "Gordon",
-      "last_name": "Freeman",
+      "name": "Gordon Freeman",
       "gender": "male",
       "has_newsletter": false
     },
     {
       "id": 567,
-      "first_name": "Cave",
-      "last_name": "Johnson",
+      "name": "Cave Johnson",
       "title": "CEO & Founder",
-      "company_id": 345,
+      "company_ids": [345],
       "background": "Visionary entrepreneur. Believes in the power of science. May or may not have turned himself into a computer.",
       "linkedin_url": "https://linkedin.com/in/cavejohnson",
       "gender": "male",

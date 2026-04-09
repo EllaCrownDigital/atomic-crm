@@ -403,10 +403,14 @@ BEGIN
   UPDATE contacts SET
     avatar = COALESCE(winner_contact.avatar, loser_contact.avatar),
     gender = COALESCE(winner_contact.gender, loser_contact.gender),
-    first_name = COALESCE(winner_contact.first_name, loser_contact.first_name),
-    last_name = COALESCE(winner_contact.last_name, loser_contact.last_name),
+    name = COALESCE(winner_contact.name, loser_contact.name),
     title = COALESCE(winner_contact.title, loser_contact.title),
-    company_id = COALESCE(winner_contact.company_id, loser_contact.company_id),
+    company_ids = ARRAY(
+      SELECT DISTINCT unnest(
+        COALESCE(winner_contact.company_ids, ARRAY[]::bigint[]) ||
+        COALESCE(loser_contact.company_ids, ARRAY[]::bigint[])
+      )
+    ),
     email_jsonb = merged_emails,
     phone_jsonb = merged_phones,
     linkedin_url = COALESCE(winner_contact.linkedin_url, loser_contact.linkedin_url),
@@ -437,6 +441,35 @@ BEGIN
       )
       FROM jsonb_array_elements(NEW.email_jsonb) AS elem
     ), '[]'::jsonb);
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION "public"."sanitize_phone_numbers"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+  IF NEW.phone_jsonb IS NOT NULL THEN
+    NEW.phone_jsonb = COALESCE((
+      SELECT jsonb_agg(
+        jsonb_set(elem, '{number}', to_jsonb(regexp_replace(elem->>'number', '[^0-9+]', '', 'g')))
+      )
+      FROM jsonb_array_elements(NEW.phone_jsonb) AS elem
+    ), '[]'::jsonb);
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION "public"."sanitize_company_phone_number"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+  IF NEW.phone_number IS NOT NULL THEN
+    NEW.phone_number = regexp_replace(NEW.phone_number, '[^0-9+]', '', 'g');
   END IF;
   RETURN NEW;
 END;

@@ -7,6 +7,13 @@ import { useRecordContext } from "ra-core";
 
 import type { Contact } from "../types";
 
+function getInitials(name?: string): string {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
 export const Avatar = (props: {
   record?: Contact;
   width?: 20 | 25 | 40;
@@ -16,7 +23,7 @@ export const Avatar = (props: {
   const record = useRecordContext<Contact>(props);
   // If we come from company page, the record is defined (to pass the company as a prop),
   // but neither of those fields are and this lead to an error when creating contact.
-  if (!record?.avatar && !record?.first_name && !record?.last_name) {
+  if (!record?.avatar && !record?.name) {
     return null;
   }
 
@@ -32,8 +39,7 @@ export const Avatar = (props: {
     <ShadcnAvatar className={sizeClass} title={props.title}>
       <AvatarImage src={record.avatar?.src ?? undefined} />
       <AvatarFallback className={size && size < 40 ? "text-[10px]" : "text-sm"}>
-        {record.first_name?.charAt(0).toUpperCase()}
-        {record.last_name?.charAt(0).toUpperCase()}
+        {getInitials(record.name)}
       </AvatarFallback>
     </ShadcnAvatar>
   );

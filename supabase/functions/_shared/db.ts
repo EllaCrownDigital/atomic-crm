@@ -19,8 +19,7 @@ import { Pool } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 // Database schema types
 export interface ContactsTable {
   id: Generated<number>;
-  first_name: string | null;
-  last_name: string | null;
+  name: string | null;
   gender: string | null;
   title: string | null;
   email_jsonb: unknown | null; // JSONB array
@@ -32,7 +31,7 @@ export interface ContactsTable {
   has_newsletter: boolean | null;
   status: string | null;
   tags: number[] | null;
-  company_id: number | null;
+  company_ids: number[];
   sales_id: number | null;
   linkedin_url: string | null;
 }

@@ -119,10 +119,13 @@ export function exportToVCard(
   lines.push("VERSION:3.0");
 
   // Name (N: Family Name;Given Name;Additional Names;Honorific Prefixes;Honorific Suffixes)
-  lines.push(`N:${contact.last_name};${contact.first_name};;;`);
+  const nameParts = (contact.name || "").trim().split(/\s+/);
+  const givenName = nameParts[0] || "";
+  const familyName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+  lines.push(`N:${familyName};${givenName};;;`);
 
   // Formatted name
-  lines.push(`FN:${contact.first_name} ${contact.last_name}`);
+  lines.push(`FN:${contact.name}`);
 
   // Title/Job position
   if (contact.title) {

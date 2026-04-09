@@ -20,7 +20,7 @@ export function extractCompanyName(domain: string) {
 }
 
 /**
- * Extracts the first name, last name, email, and domain from a mail contact.
+ * Extracts the name, email, and domain from a mail contact.
  *
  * Example:
  *   "ToFull": [
@@ -32,8 +32,7 @@ export function extractCompanyName(domain: string) {
  *
  * Return Value:
  *  {
- *    firstName: "Firstname",
- *    lastName: "Lastname",
+ *    name: "Firstname Lastname",
  *    email: "firstname.lastname@marmelab.com",
  *    domain: "marmelab.com"
  * }
@@ -63,9 +62,11 @@ export const extractMailContactData = (
     const companyName = extractCompanyName(domain);
     const website = `https://${domain}`;
 
+    const name = [capitalize(firstName), capitalize(lastName)]
+      .filter(Boolean)
+      .join(" ");
     return {
-      firstName: capitalize(firstName),
-      lastName: capitalize(lastName),
+      name,
       email: contact.Email,
       domain,
       companyName,

@@ -17,7 +17,7 @@ export const ContactList = () => {
               to={`/contacts/${contact.id}/show`}
               className="text-sm hover:underline"
             >
-              {contact.first_name} {contact.last_name}
+              {contact.name}
             </RouterLink>
             <span className="text-xs text-muted-foreground">
               {contact.title && contact.company_name

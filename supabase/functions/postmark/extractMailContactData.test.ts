@@ -5,7 +5,7 @@ import {
 } from "./extractMailContactData";
 
 describe("extractMailContactData", () => {
-  it("extracts first name, last name, email, domain, company name, and website when Name is provided", () => {
+  it("extracts name, email, domain, company name, and website when Name is provided", () => {
     expect(
       extractMailContactData([
         {
@@ -15,8 +15,7 @@ describe("extractMailContactData", () => {
       ]),
     ).toEqual([
       {
-        firstName: "Firstname",
-        lastName: "Lastname",
+        name: "Firstname Lastname",
         email: "firstname.lastname@marmelab.com",
         domain: "marmelab.com",
         companyName: "Marmelab",
@@ -30,8 +29,7 @@ describe("extractMailContactData", () => {
       extractMailContactData([{ Email: "john.doe@example.com", Name: "" }]),
     ).toEqual([
       {
-        firstName: "John",
-        lastName: "Doe",
+        name: "John Doe",
         email: "john.doe@example.com",
         domain: "example.com",
         companyName: "Example",
@@ -40,13 +38,12 @@ describe("extractMailContactData", () => {
     ]);
   });
 
-  it("sets empty firstName and capitalizes lastName when name has no space", () => {
+  it("capitalizes name when name has no space", () => {
     expect(
       extractMailContactData([{ Email: "alice@example.com", Name: "Alice" }]),
     ).toEqual([
       {
-        firstName: "",
-        lastName: "Alice",
+        name: "Alice",
         companyName: "Example",
         website: "https://example.com",
         email: "alice@example.com",
@@ -65,8 +62,7 @@ describe("extractMailContactData", () => {
       ]),
     ).toEqual([
       {
-        firstName: "Jean",
-        lastName: "De La Fontaine",
+        name: "Jean De La Fontaine",
         companyName: "Example",
         website: "https://example.com",
         email: "jean.de.la.fontaine@example.com",
@@ -82,8 +78,7 @@ describe("extractMailContactData", () => {
       {
         companyName: "Company",
         website: "https://company.org",
-        firstName: "Jane",
-        lastName: "Smith",
+        name: "Jane Smith",
         email: "jane.smith@company.org",
         domain: "company.org",
       },
@@ -102,8 +97,7 @@ describe("extractMailContactData", () => {
       {
         companyName: "Company",
         website: "https://company.org",
-        firstName: "Jane",
-        lastName: "Smith",
+        name: "Jane Smith",
         email: "jane.smith@company.org",
         domain: "company.org",
       },
@@ -117,15 +111,13 @@ describe("extractMailContactData", () => {
     ]);
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
-      firstName: "Alice",
-      lastName: "Wonder",
+      name: "Alice Wonder",
       domain: "foo.com",
       companyName: "Foo",
       website: "https://foo.com",
     });
     expect(result[1]).toMatchObject({
-      firstName: "Bob",
-      lastName: "Builder",
+      name: "Bob Builder",
       domain: "bar.com",
       companyName: "Bar",
       website: "https://bar.com",
@@ -146,8 +138,7 @@ describe("extractMailContactData", () => {
       ]),
     ).toEqual([
       {
-        firstName: "Firstname",
-        lastName: "Lastname",
+        name: "Firstname Lastname",
         email: "firstname.lastname@marmelab.com",
         domain: "marmelab.com",
         companyName: "Marmelab",

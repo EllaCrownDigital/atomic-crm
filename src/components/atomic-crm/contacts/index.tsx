@@ -9,6 +9,5 @@ export default {
   show: ContactShow,
   edit: ContactEdit,
   create: ContactCreate,
-  recordRepresentation: (record: Contact) =>
-    record?.first_name + " " + record?.last_name,
+  recordRepresentation: (record: Contact) => record?.name ?? "",
 };

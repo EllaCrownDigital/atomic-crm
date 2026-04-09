@@ -13,11 +13,10 @@ it("should throw an error if the object is empty", () => {
 });
 
 it("should return the query value", () => {
-  expect(transformOrFilter({ "last_name@ilike": "one" })).toEqual("one");
+  expect(transformOrFilter({ "name@ilike": "one" })).toEqual("one");
   expect(
     transformOrFilter({
-      "last_name@ilike": "one",
-      "first_name@ilike": "one",
+      "name@ilike": "one",
     }),
   ).toEqual("one");
 });

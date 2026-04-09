@@ -11,11 +11,11 @@ describe("validateReadOnly", () => {
     ],
     [
       "SELECT with JOIN",
-      "SELECT c.name, co.name FROM contacts c JOIN companies co ON c.company_id = co.id",
+      "SELECT c.name, co.name FROM contacts c JOIN companies co ON co.id = ANY(c.company_ids)",
     ],
     [
       "SELECT with subquery",
-      "SELECT * FROM contacts WHERE company_id IN (SELECT id FROM companies WHERE sector = 'Tech')",
+      "SELECT * FROM contacts WHERE company_ids && ARRAY(SELECT id FROM companies WHERE sector = 'Tech')",
     ],
     [
       "read-only CTE",
@@ -79,10 +79,7 @@ describe("validateReadOnly", () => {
 
 describe("validateWrite", () => {
   it.each([
-    [
-      "INSERT",
-      "INSERT INTO contacts (first_name, last_name) VALUES ('John', 'Doe')",
-    ],
+    ["INSERT", "INSERT INTO contacts (name) VALUES ('John Doe')"],
     ["UPDATE", "UPDATE contacts SET name = 'test' WHERE id = 1"],
     ["DELETE", "DELETE FROM contacts WHERE id = 1"],
     [
@@ -91,7 +88,7 @@ describe("validateWrite", () => {
     ],
     [
       "UPDATE with subquery",
-      "UPDATE contacts SET company_id = (SELECT id FROM companies WHERE name = 'Acme') WHERE id = 1",
+      "UPDATE contacts SET company_ids = ARRAY[(SELECT id FROM companies WHERE name = 'Acme')] WHERE id = 1",
     ],
     [
       "writable CTE with INSERT",

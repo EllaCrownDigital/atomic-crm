@@ -14,7 +14,9 @@ export const generateDeals = (db: Db): Deal[] => {
     const company = random.arrayElement(db.companies);
     company.nb_deals = (company.nb_deals ?? 0) + 1;
     const contacts = random.arrayElements(
-      db.contacts.filter((contact) => contact.company_id === company.id),
+      db.contacts.filter((contact) =>
+        contact.company_ids?.includes(company.id),
+      ),
       datatype.number({ min: 1, max: 3 }),
     );
     const lowercaseName = lorem.words();

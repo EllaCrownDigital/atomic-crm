@@ -255,7 +255,7 @@ describe("getList", () => {
 
     await expect(
       getListAdapter("resource", {
-        filter: { "@or": { last_name: "one" } },
+        filter: { "@or": { name: "one" } },
       }),
     ).resolves.toEqual([{ id: 1 }]);
 
@@ -603,7 +603,7 @@ describe("getManyReference", () => {
         target: "target",
         pagination: { page: 1, perPage: 10 },
         sort: { field: "id", order: "ASC" },
-        filter: { "@or": { last_name: "one" } },
+        filter: { "@or": { name: "one" } },
       }),
     ).resolves.toEqual([{ id: 1 }]);
 

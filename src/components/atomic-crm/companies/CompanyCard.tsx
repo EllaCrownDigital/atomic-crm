@@ -1,12 +1,12 @@
 import { Handshake } from "lucide-react";
 import { Link } from "react-router";
 import {
+  ListBase,
   useCreatePath,
   useListContext,
   useRecordContext,
   useTranslate,
 } from "ra-core";
-import { ReferenceManyField } from "@/components/admin/reference-many-field";
 import { Card } from "@/components/ui/card";
 
 import { Avatar as ContactAvatar } from "../contacts/Avatar";
@@ -44,9 +44,15 @@ export const CompanyCard = (props: { record?: Company }) => {
         <div className="flex flex-row w-full justify-between gap-2">
           <div className="flex items-center">
             {record.nb_contacts ? (
-              <ReferenceManyField reference="contacts" target="company_id">
+              <ListBase
+                resource="contacts"
+                filter={{ "company_ids@cs": `{${record.id}}` }}
+                perPage={4}
+                disableSyncWithLocation
+                storeKey={false}
+              >
                 <AvatarGroupIterator />
-              </ReferenceManyField>
+              </ListBase>
             ) : null}
           </div>
           {record.nb_deals ? (
@@ -80,7 +86,7 @@ const AvatarGroupIterator = () => {
           record={record}
           width={25}
           height={25}
-          title={`${record.first_name} ${record.last_name}`}
+          title={record.name}
         />
       ))}
       {total > MAX_AVATARS && (

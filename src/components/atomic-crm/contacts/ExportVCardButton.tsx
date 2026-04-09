@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import { useGetOne, useRecordContext, useTranslate } from "ra-core";
+import { useGetMany, useRecordContext, useTranslate } from "ra-core";
 import { Button } from "@/components/ui/button";
 import type { Contact, Company } from "../types";
 import { exportToVCard } from "./contactModel";
@@ -8,11 +8,11 @@ export const ExportVCardButton = () => {
   const contact = useRecordContext<Contact>();
   const translate = useTranslate();
 
-  // Fetch the company data on mount
-  const { data: company } = useGetOne<Company>(
+  // Fetch the companies data on mount
+  const { data: companies } = useGetMany<Company>(
     "companies",
-    { id: contact?.company_id ?? undefined },
-    { enabled: !!contact?.company_id },
+    { ids: contact?.company_ids ?? [] },
+    { enabled: (contact?.company_ids?.length ?? 0) > 0 },
   );
 
   const handleExport = async () => {
@@ -48,7 +48,7 @@ export const ExportVCardButton = () => {
     }
 
     // Generate vCard content
-    const vCardContent = exportToVCard(contact, company, photoData);
+    const vCardContent = exportToVCard(contact, companies?.[0], photoData);
 
     // Create blob and download
     const blob = new Blob([vCardContent], {
@@ -57,7 +57,7 @@ export const ExportVCardButton = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${contact.first_name}_${contact.last_name}.vcf`;
+    link.download = `${(contact.name || "contact").replace(/\s+/g, "_")}.vcf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

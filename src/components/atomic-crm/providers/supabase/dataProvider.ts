@@ -304,8 +304,7 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
     resource: "contacts",
     beforeGetList: async (params) => {
       return applyFullTextSearch([
-        "first_name",
-        "last_name",
+        "name",
         "company_name",
         "title",
         "email",
@@ -344,7 +343,7 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
   {
     resource: "contacts_summary",
     beforeGetList: async (params) => {
-      return applyFullTextSearch(["first_name", "last_name"])(params);
+      return applyFullTextSearch(["name"])(params);
     },
   },
   {

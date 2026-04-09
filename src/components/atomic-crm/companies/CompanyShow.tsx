@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserPlus } from "lucide-react";
 import {
+  ListBase,
   RecordContextProvider,
   ShowBase,
   useListContext,
@@ -142,23 +143,24 @@ const CompanyShowContent = () => {
               </TabsContent>
               <TabsContent value="contacts">
                 {record.nb_contacts ? (
-                  <ReferenceManyField
-                    reference="contacts_summary"
-                    target="company_id"
-                    sort={{ field: "last_name", order: "ASC" }}
+                  <ListBase
+                    resource="contacts_summary"
+                    filter={{ "company_ids@cs": `{${record.id}}` }}
+                    sort={{ field: "name", order: "ASC" }}
+                    perPage={250}
+                    disableSyncWithLocation
+                    storeKey={false}
                   >
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-row justify-end space-x-2 mt-1">
                         {!!record.nb_contacts && (
-                          <SortButton
-                            fields={["last_name", "first_name", "last_seen"]}
-                          />
+                          <SortButton fields={["name", "last_seen"]} />
                         )}
                         <CreateRelatedContactButton />
                       </div>
                       <ContactsIterator />
                     </div>
-                  </ReferenceManyField>
+                  </ListBase>
                 ) : (
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-row justify-end space-x-2 mt-1">
@@ -209,9 +211,7 @@ const ContactsIterator = () => {
                 <Avatar />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium">
-                  {`${contact.first_name} ${contact.last_name}`}
-                </div>
+                <div className="font-medium">{contact.name}</div>
                 <div className="text-sm text-muted-foreground">
                   {contact.title}
                   {contact.nb_tasks
@@ -248,7 +248,7 @@ const CreateRelatedContactButton = () => {
     <Button variant="outline" asChild size="sm" className="h-9">
       <RouterLink
         to="/contacts/create"
-        state={company ? { record: { company_id: company.id } } : undefined}
+        state={company ? { record: { company_ids: [company.id] } } : undefined}
         className="flex items-center gap-2"
       >
         <UserPlus className="h-4 w-4" />

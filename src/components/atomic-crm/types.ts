@@ -82,10 +82,9 @@ export type PhoneNumberAndType = {
 };
 
 export type Contact = {
-  first_name: string;
-  last_name: string;
+  name: string;
   title: string;
-  company_id?: Identifier | null;
+  company_ids: Identifier[];
   email_jsonb: EmailAndType[];
   avatar?: Partial<RAFile>;
   linkedin_url?: string | null;

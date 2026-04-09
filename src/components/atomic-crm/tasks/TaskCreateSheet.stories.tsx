@@ -15,14 +15,12 @@ export default meta;
 const defaultData = {
   contacts: [
     buildContact({
-      first_name: "Ada",
+      name: "Ada Lovelace",
       id: 1,
-      last_name: "Lovelace",
     }),
     buildContact({
-      first_name: "Grace",
+      name: "Grace Hopper",
       id: 2,
-      last_name: "Hopper",
     }),
   ],
 };

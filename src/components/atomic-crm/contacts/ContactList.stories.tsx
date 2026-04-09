@@ -16,16 +16,14 @@ export default meta;
 
 const successContacts = [
   buildContact({
-    first_name: "Ada",
+    name: "Ada Lovelace",
     id: 1,
-    last_name: "Lovelace",
     last_seen: "2025-01-05T10:00:00.000Z",
     title: "CTO",
   }),
   buildContact({
-    first_name: "Grace",
+    name: "Grace Hopper",
     id: 2,
-    last_name: "Hopper",
     last_seen: "2025-01-06T11:00:00.000Z",
     title: "Rear Admiral",
   }),
@@ -84,15 +82,13 @@ export const DesktopError = () => (
 const dataForBulkAddTag = {
   contacts: [
     buildContact({
-      first_name: "Ada",
+      name: "Ada Lovelace",
       id: 1,
-      last_name: "Lovelace",
       tags: [1],
     }),
     buildContact({
-      first_name: "Grace",
+      name: "Grace Hopper",
       id: 2,
-      last_name: "Hopper",
       tags: [],
     }),
   ],

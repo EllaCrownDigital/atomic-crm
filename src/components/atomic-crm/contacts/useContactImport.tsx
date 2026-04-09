@@ -4,8 +4,7 @@ import { useCallback, useMemo } from "react";
 import type { Company, Tag } from "../types";
 
 export type ContactImportSchema = {
-  first_name: string;
-  last_name: string;
+  name: string;
   gender: string;
   title: string;
   company: string;
@@ -76,9 +75,13 @@ export function useContactImport() {
     async (batch: ContactImportSchema[]) => {
       const [companies, tags] = await Promise.all([
         getCompanies(
-          batch
-            .map((contact) => contact.company?.trim())
-            .filter((name) => name),
+          batch.flatMap(
+            (contact) =>
+              contact.company
+                ?.split(";")
+                .map((name) => name.trim())
+                .filter((name) => name) ?? [],
+          ),
         ),
         getTags(batch.flatMap((batch) => parseTags(batch.tags))),
       ]);
@@ -86,8 +89,7 @@ export function useContactImport() {
       await Promise.all(
         batch.map(
           async ({
-            first_name,
-            last_name,
+            name,
             gender,
             title,
             email_work,
@@ -115,17 +117,22 @@ export function useContactImport() {
               { number: phone_home, type: "Home" },
               { number: phone_other, type: "Other" },
             ].filter(({ number }) => number);
-            const company = companyName?.trim()
-              ? companies.get(companyName.trim())
-              : undefined;
+            const companyIds = companyName
+              ? companyName
+                  .split(";")
+                  .map((name) => name.trim())
+                  .filter((name) => name)
+                  .map((name) => companies.get(name))
+                  .filter((c): c is Company => !!c)
+                  .map((c) => c.id)
+              : [];
             const tagList = parseTags(tagNames)
               .map((name) => tags.get(name))
               .filter((tag): tag is Tag => !!tag);
 
             return dataProvider.create("contacts", {
               data: {
-                first_name,
-                last_name,
+                name,
                 gender,
                 title,
                 email_jsonb,
@@ -139,7 +146,7 @@ export function useContactImport() {
                   : today,
                 has_newsletter,
                 status,
-                company_id: company?.id,
+                company_ids: companyIds,
                 tags: tagList.map((tag) => tag.id),
                 sales_id: user?.identity?.id,
                 linkedin_url,

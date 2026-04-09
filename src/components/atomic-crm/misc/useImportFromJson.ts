@@ -364,16 +364,19 @@ export const useImportFromJson = (): [
 
         const { data } = await dataProvider.create("contacts", {
           data: {
-            last_name: dataToImport.last_name.trim(),
-            first_name: dataToImport.first_name.trim(),
+            name: dataToImport.name.trim(),
             title: dataToImport.title?.trim(),
             background: dataToImport.background?.trim(),
             linkedin_url: dataToImport.linkedin_url?.trim(),
             gender: gender || undefined,
             has_newsletter: !!dataToImport.has_newsletter,
-            company_id: dataToImport.company_id
-              ? idsMaps.companies[dataToImport.company_id]
-              : undefined,
+            company_ids: dataToImport.company_ids
+              ? dataToImport.company_ids
+                  .map((id: number) => idsMaps.companies[id])
+                  .filter(Boolean)
+              : dataToImport.company_id
+                ? [idsMaps.companies[dataToImport.company_id]].filter(Boolean)
+                : [],
             email_jsonb: Array.isArray(dataToImport.emails)
               ? dataToImport.emails
               : undefined,
@@ -744,8 +747,8 @@ type ContactImport = {
   id: number;
   sales_id: number;
   company_id?: number;
-  first_name: string;
-  last_name: string;
+  company_ids?: number[];
+  name: string;
   title?: string;
   background?: string;
   linkedin_url?: string;

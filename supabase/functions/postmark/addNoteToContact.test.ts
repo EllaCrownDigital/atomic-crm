@@ -154,8 +154,7 @@ describe("addNoteToContact", () => {
   describe("getOrCreateContactFromEmailInfo", () => {
     const contactParams = {
       email: "alice@acme.com",
-      firstName: "Alice",
-      lastName: "Smith",
+      name: "Alice Smith",
       salesId: 42,
       domain: "acme.com",
       companyName: "Acme",
@@ -165,8 +164,7 @@ describe("addNoteToContact", () => {
     it("returns the existing contact when it already exists in the database", async () => {
       const existingContact = {
         id: 10,
-        first_name: "Alice",
-        last_name: "Smith",
+        name: "Alice Smith",
       };
       mockFrom.mockReturnValue({
         select: () => ({
@@ -203,9 +201,8 @@ describe("addNoteToContact", () => {
     it("creates and returns a new contact with the associated company", async () => {
       const newContact = {
         id: 11,
-        first_name: "Alice",
-        last_name: "Smith",
-        company_id: 1,
+        name: "Alice Smith",
+        company_ids: [1],
       };
       const existingCompany = {
         id: 1,
@@ -245,12 +242,11 @@ describe("addNoteToContact", () => {
       expect(mockFrom).toHaveBeenCalledTimes(3);
     });
 
-    it("creates a contact with null company_id when domain is a mail provider", async () => {
+    it("creates a contact with empty company_ids when domain is a mail provider", async () => {
       const newContact = {
         id: 12,
-        first_name: "Alice",
-        last_name: "Smith",
-        company_id: null,
+        name: "Alice Smith",
+        company_ids: [],
       };
 
       mockFrom
@@ -329,8 +325,7 @@ describe("addNoteToContact", () => {
       salesEmail: "sales@company.com",
       email: "alice@acme.com",
       domain: "acme.com",
-      firstName: "Alice",
-      lastName: "Smith",
+      name: "Alice Smith",
       noteContent: "A note",
       attachments: [],
       companyName: "Acme",
@@ -341,8 +336,7 @@ describe("addNoteToContact", () => {
       const salesRecord = { id: 1, email: "sales@company.com" };
       const existingContact = {
         id: 10,
-        first_name: "Alice",
-        last_name: "Smith",
+        name: "Alice Smith",
       };
 
       mockFrom
@@ -389,8 +383,7 @@ describe("addNoteToContact", () => {
       const salesRecord = { id: 1, email: "sales@company.com" };
       const existingContact = {
         id: 10,
-        first_name: "Alice",
-        last_name: "Smith",
+        name: "Alice Smith",
       };
 
       mockFrom
